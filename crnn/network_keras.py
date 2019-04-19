@@ -1,7 +1,7 @@
-from keras.layers import Conv2D,BatchNormalization,MaxPool2D,Input,Permute,Reshape,Dense,LeakyReLU,Activation
-from keras.models import Model
-from keras.layers import ZeroPadding2D
-from keras.activations import relu
+from tensorflow.keras.layers import Conv2D,BatchNormalization,MaxPool2D,Input,Permute,Reshape,Dense,LeakyReLU,Activation
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import ZeroPadding2D
+from tensorflow.keras.activations import relu
 
 
 def keras_crnn(imgH, nc, nclass, nh, n_rnn=2, leakyRelu=False,lstmFlag=True):

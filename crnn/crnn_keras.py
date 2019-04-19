@@ -17,7 +17,12 @@ def crnnSource():
 
 ##加载模型
 model,converter = crnnSource()
-
+# Fake compile to avoid some errors
+model.compile(optimizer='rmsprop', loss=lambda y_true, y_pred: y_true)
+from zoo import init_nncontext
+from zoo.tfpark import KerasModel
+_ = init_nncontext()
+model = KerasModel(model)
 def crnnOcr(image):
        """
        crnn模型，ocr识别
@@ -32,9 +37,9 @@ def crnnOcr(image):
        image = np.array([[image]])
        global graph
        with graph.as_default():
-          preds       = model.predict(image)
+           preds       = model.predict(image, distributed=True)
        preds = preds[0]
-       preds = np.argmax(preds,axis=2).reshape((-1,))
+       preds = np.argmax(preds,axis=-1).reshape((-1,))
        sim_pred  = converter.decode(preds)
        return sim_pred
        

@@ -39,7 +39,7 @@ AngleModelPbtxt = os.path.join(pwd,"models","Angle-model.pbtxt")
 ##OCR模型是否调用LSTM层
 LSTMFLAG = True
 ##模型选择 True:中英文模型 False:英文模型
-ocrFlag = 'torch'##ocr模型 支持 keras  torch版本
+ocrFlag = 'keras'##ocr模型 支持 keras  torch版本
 chinsesModel = True
 ocrModelKeras = os.path.join(pwd,"models","ocr-dense-keras.h5")##keras版本OCR，暂时支持dense
 if chinsesModel:
