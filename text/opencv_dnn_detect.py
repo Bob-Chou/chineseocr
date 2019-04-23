@@ -24,6 +24,8 @@ if opencvFlag=='keras':
 else:
    angleNet = cv2.dnn.readNetFromTensorflow(AngleModelPb,AngleModelPbtxt)##dnn 文字方向检测
 textNet  = cv2.dnn.readNetFromDarknet(yoloCfg,yoloWeights)##文字定位
+from wrapper import profile
+@profile('opencv-detection', 3, 10)
 def text_detect(img):
     thresh=0
     h,w = img.shape[:2]

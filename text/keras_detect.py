@@ -26,7 +26,8 @@ input_shape = K.placeholder(shape=(2, ))##图像resize尺寸:h,w
 box_score = box_layer([*textModel.output,image_shape,input_shape],anchors, num_classes)
 
 
-
+from wrapper import profile
+@profile('keras-detection', 3, 10)
 def text_detect(img,prob = 0.05):
     im    = Image.fromarray(img)
     scale = IMGSIZE[0]

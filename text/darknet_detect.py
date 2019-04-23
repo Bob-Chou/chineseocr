@@ -61,8 +61,10 @@ if GPU:
 net = dn.load_net(yoloCfg.encode('utf-8'), yoloWeights.encode('utf-8'), 0)
 meta = dn.load_meta(yoloData.encode('utf-8'))
 os.chdir(pwd)
+from wrapper import profile
+@profile('darknet-detection', 3, 10)
 def text_detect(img):
-    
+
     r = detect_np(net, meta, img,thresh=0, hier_thresh=0.5, nms=None)##输出所有box,与opencv dnn统一
     bboxes = to_box(r)
     return bboxes

@@ -17,7 +17,8 @@ def crnnSource():
 
 ##加载模型
 model,converter = crnnSource()
-
+from wrapper import profile
+@profile('keras-crnn', 3, 10)
 def crnnOcr(image):
        """
        crnn模型，ocr识别

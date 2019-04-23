@@ -1,6 +1,7 @@
 classes= 2
 train  = train.txt
 valid  = test.txt
-names  = ../models/text.names
+#names  = ../models/text.names
+names  = /home/bozhou/00_Workspace/00_Zoo/yunda_chineseocr/models/text.names
 backup = backup
 

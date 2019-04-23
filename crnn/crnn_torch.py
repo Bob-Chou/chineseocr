@@ -37,6 +37,8 @@ def crnnSource():
 ##加载模型
 model,converter = crnnSource()
 model.eval()
+from wrapper import profile
+@profile('torch-crnn', 3, 10)
 def crnnOcr(image):
        """
        crnn模型，ocr识别
