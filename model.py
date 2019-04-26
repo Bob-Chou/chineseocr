@@ -42,6 +42,8 @@ def text_detect(img,
     boxes, scores = detect.text_detect(np.array(img))
     boxes = np.array(boxes,dtype=np.float32)
     scores = np.array(scores,dtype=np.float32)
+    from plot_box import show_box
+    show_box(img, boxes, scores)
     textdetector  = TextDetector(MAX_HORIZONTAL_GAP,MIN_V_OVERLAPS,MIN_SIZE_SIM)
     shape = img.shape[:2]
     boxes = textdetector.detect(boxes,

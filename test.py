@@ -67,7 +67,8 @@ def plot_boxes(img,angle, result,color=(0,0,0)):
 
 import time
 from PIL import Image
-p = './test/idcard-demo.jpeg'
+# p = './test/idcard-demo.jpeg'
+p = '/home/bozhou/02_Warehouse/01_chinese_ocr/test/d8f317b3-fbbc-453e-8c90-210d3a395fbe.jpg'
 img = cv2.imread(p)
 
 h,w = img.shape[:2]
@@ -93,7 +94,8 @@ timeTake = time.time()-timeTake
 print('It take:{}s'.format(timeTake))
 for line in result:
     print(line['text'])
-plot_boxes(img,angle, result,color=(0,0,0))
+img = plot_boxes(img,angle, result,color=(0,0,0))
+# img.show()
 
 
 # In[ ]:
