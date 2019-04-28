@@ -42,8 +42,15 @@ def text_detect(img,
     boxes, scores = detect.text_detect(np.array(img))
     boxes = np.array(boxes,dtype=np.float32)
     scores = np.array(scores,dtype=np.float32)
-    from plot_box import show_box
-    show_box(img, boxes, scores)
+    # for b, s in zip(boxes, scores):
+    #     print(b, s)
+    from PIL import ImageDraw, Image
+    # _img = Image.open('/home/bozhou/02_Warehouse/01_chinese_ocr/test/d8f317b3-fbbc-453e-8c90-210d3a395fbe.jpg')
+    # draw = ImageDraw.Draw(_img)
+    # for b in boxes:
+    #     draw.rectangle([b[0], b[1], b[2], b[3]])
+    # _img.show()
+
     textdetector  = TextDetector(MAX_HORIZONTAL_GAP,MIN_V_OVERLAPS,MIN_SIZE_SIM)
     shape = img.shape[:2]
     boxes = textdetector.detect(boxes,
@@ -53,7 +60,7 @@ def text_detect(img,
                                 TEXT_PROPOSALS_NMS_THRESH,
                                 TEXT_LINE_NMS_THRESH,
                                 )
-    
+
     text_recs = get_boxes(boxes)
     newBox = []
     rx = 1
@@ -64,7 +71,7 @@ def text_detect(img,
            x3,y3 = (box[6],box[7])
            x4,y4 = (box[4],box[5])
            newBox.append([x1*rx,y1*ry,x2*rx,y2*ry,x3*rx,y3*ry,x4*rx,y4*ry])
-    return newBox 
+    return newBox
 
 
 

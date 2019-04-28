@@ -23,9 +23,14 @@ textModel.load_weights(kerasTextModel)
 sess = K.get_session()
 image_shape = K.placeholder(shape=(2, ))##图像原尺寸:h,w
 input_shape = K.placeholder(shape=(2, ))##图像resize尺寸:h,w
-box_score = box_layer([*textModel.output,image_shape,input_shape],anchors, num_classes)
-
-
+from yolo3.model import yolo_eval
+# box_score = box_layer([*textModel.output,image_shape,input_shape],anchors, num_classes)
+_boxes, _scores, _ = yolo_eval(textModel.output,
+                            anchors,
+                            num_classes,
+                            image_shape,
+                            score_threshold=.1,
+                            iou_threshold=.8)
 
 def text_detect(img,prob = 0.05):
     im    = Image.fromarray(img)
@@ -50,13 +55,13 @@ def text_detect(img,prob = 0.05):
          
          """
          box,scores = sess.run(
-            [box_score],
+            [_boxes, _scores],
             feed_dict={
                 textModel.input: image_data,
                 input_shape: [h_, w_],
                 image_shape: [h, w],
                 K.learning_phase(): 0
-            })[0]
+            })
         
 
     keep = np.where(scores>prob)
@@ -67,5 +72,10 @@ def text_detect(img,prob = 0.05):
     box[:, 3][box[:, 3]>=h] = h-1
     box = box[keep[0]]
     scores = scores[keep[0]]
-    return box,scores
+    _box = np.zeros(box.shape)
+    _box[..., 0] = box[..., 1]
+    _box[..., 1] = box[..., 0]
+    _box[..., 2] = box[..., 3]
+    _box[..., 3] = box[..., 2]
+    return _box,scores
 
