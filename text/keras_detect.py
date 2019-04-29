@@ -26,11 +26,11 @@ input_shape = K.placeholder(shape=(2, ))##图像resize尺寸:h,w
 from yolo3.model import yolo_eval
 # box_score = box_layer([*textModel.output,image_shape,input_shape],anchors, num_classes)
 _boxes, _scores, _ = yolo_eval(textModel.output,
-                            anchors,
-                            num_classes,
-                            image_shape,
-                            score_threshold=.1,
-                            iou_threshold=.8)
+                               anchors,
+                               num_classes,
+                               image_shape,
+                               score_threshold=.1,
+                               iou_threshold=.8)
 
 def text_detect(img,prob = 0.05):
     im    = Image.fromarray(img)
@@ -62,7 +62,7 @@ def text_detect(img,prob = 0.05):
                 image_shape: [h, w],
                 K.learning_phase(): 0
             })
-        
+
 
     keep = np.where(scores>prob)
     box[:, 0:4][box[:, 0:4]<0] = 0
