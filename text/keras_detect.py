@@ -23,6 +23,8 @@ textModel.load_weights(kerasTextModel)
 sess = K.get_session()
 image_shape = K.placeholder(shape=(2, ))##图像原尺寸:h,w
 input_shape = K.placeholder(shape=(2, ))##图像resize尺寸:h,w
+# Added by Bo Zhou
+# yolo3 dir is copied directly from the referred repo
 from yolo3.model import yolo_eval
 # box_score = box_layer([*textModel.output,image_shape,input_shape],anchors, num_classes)
 _boxes, _scores, _ = yolo_eval(textModel.output,
@@ -72,6 +74,10 @@ def text_detect(img,prob = 0.05):
     box[:, 3][box[:, 3]>=h] = h-1
     box = box[keep[0]]
     scores = scores[keep[0]]
+    # Added by Bo ZHOU
+    # If we use yolo_eval from referred repo, we need to exchange the
+    # column and row value of detected boxes to keep the same detection
+    # orientation and hence the subsequent process would be right
     _box = np.zeros(box.shape)
     _box[..., 0] = box[..., 1]
     _box[..., 1] = box[..., 0]
