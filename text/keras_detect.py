@@ -19,7 +19,6 @@ num_classes = len(class_names)
 textModel = yolo_text(num_classes,anchors)
 textModel.load_weights(kerasTextModel)
 
-
 sess = K.get_session()
 image_shape = K.placeholder(shape=(2, ))##图像原尺寸:h,w
 input_shape = K.placeholder(shape=(2, ))##图像resize尺寸:h,w
@@ -36,16 +35,16 @@ _boxes, _scores, _ = yolo_eval(textModel.output,
 
 def text_detect(img,prob = 0.05):
     im    = Image.fromarray(img)
-    scale = IMGSIZE[0]
+    # scale = IMGSIZE[0]
     w,h   = im.size
-    w_,h_ = resize_im(w,h, scale=scale, max_scale=2048)##短边固定为608,长边max_scale<4000
-    #boxed_image,f = letterbox_image(im, (w_,h_))
-    boxed_image = im.resize((w_,h_), Image.BICUBIC)
+    # w_,h_ = resize_im(w,h, scale=scale, max_scale=2048)##短边固定为608,长边max_scale<4000
+    boxed_image,f = letterbox_image(im, IMGSIZE)
+    # boxed_image = im.resize((w_,h_), Image.BICUBIC)
     image_data = np.array(boxed_image, dtype='float32')
     image_data /= 255.
     image_data = np.expand_dims(image_data, 0)  # Add batch dimension.
     imgShape   = np.array([[h,w]])
-    inputShape = np.array([[h_,w_]])
+    inputShape = np.array([IMGSIZE])
     
     
     global graph
@@ -60,7 +59,8 @@ def text_detect(img,prob = 0.05):
             [_boxes, _scores],
             feed_dict={
                 textModel.input: image_data,
-                input_shape: [h_, w_],
+                # input_shape: [h_, w_],
+                input_shape: IMGSIZE,
                 image_shape: [h, w],
                 K.learning_phase(): 0
             })
