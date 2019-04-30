@@ -70,7 +70,8 @@ from PIL import Image
 # p = './test/idcard-demo.jpeg'
 p = '/home/bozhou/02_Warehouse/01_chinese_ocr/test/d8f317b3-fbbc-453e-8c90-210d3a395fbe.jpg'
 img = cv2.imread(p)
-
+b, g, r = cv2.split(img)
+img = cv2.merge([r,g,b])
 h,w = img.shape[:2]
 timeTake = time.time()
 _,result,angle= model.model(img,
