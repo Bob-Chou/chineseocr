@@ -3,7 +3,7 @@ YOLO_v3 Model Defined in Keras.
 Reference: https://github.com/qqwweee/keras-yolo3.git
 """
 from config import kerasTextModel,IMGSIZE,keras_anchors,class_names,GPU,GPUID
-from text.keras_yolo3 import yolo_text,box_layer,K
+from text.keras_yolo3 import yolo_text,box_layer,K,Model
 
 from apphelper.image import resize_im,letterbox_image
 from PIL import Image
@@ -19,19 +19,24 @@ num_classes = len(class_names)
 textModel = yolo_text(num_classes,anchors)
 textModel.load_weights(kerasTextModel)
 
-sess = K.get_session()
-image_shape = K.placeholder(shape=(2, ))##图像原尺寸:h,w
-input_shape = K.placeholder(shape=(2, ))##图像resize尺寸:h,w
+# sess = K.get_session()
+# image_shape = K.placeholder(shape=(2, ))##图像原尺寸:h,w
+image_shape = tf.keras.layers.Input(shape=(2, ))
+# input_shape = K.placeholder(shape=(2, ))##图像resize尺寸:h,w
 # Added by Bo Zhou
 # yolo3 dir is copied directly from the referred repo
 from yolo3.model import yolo_eval
 # box_score = box_layer([*textModel.output,image_shape,input_shape],anchors, num_classes)
-_boxes, _scores, _ = yolo_eval(textModel.output,
-                               anchors,
-                               num_classes,
-                               image_shape,
-                               score_threshold=.1,
-                               iou_threshold=.8)
+yolo_eval = tf.keras.layers.Lambda(yolo_eval,
+                                   arguments={"anchors": anchors,
+                                              "num_classes": num_classes,
+                                              "image_shape": image_shape,
+                                              "score_threshold": .1,
+                                              "iou_threshold": .8})
+_boxes, _scores, _ = yolo_eval(textModel.output)
+
+# wrapped end-to-end model
+keras_model = Model([textModel.input, image_shape], [_boxes, _scores])
 
 def text_detect(img,prob = 0.05):
     im    = Image.fromarray(img)
@@ -45,8 +50,8 @@ def text_detect(img,prob = 0.05):
     image_data = np.expand_dims(image_data, 0)  # Add batch dimension.
     imgShape   = np.array([[h,w]])
     inputShape = np.array([IMGSIZE])
-    
-    
+
+
     global graph
     with graph.as_default():
          ##定义 graph变量 解决web.py 相关报错问题
@@ -55,16 +60,7 @@ def text_detect(img,prob = 0.05):
          box,scores = pred[:,:4],pred[:,-1]
          
          """
-         box,scores = sess.run(
-            [_boxes, _scores],
-            feed_dict={
-                textModel.input: image_data,
-                # input_shape: [h_, w_],
-                input_shape: IMGSIZE,
-                image_shape: [h, w],
-                K.learning_phase(): 0
-            })
-
+         box, scores = keras_model.predict_on_batch([image_data, imgShape])
 
     keep = np.where(scores>prob)
     box[:, 0:4][box[:, 0:4]<0] = 0
