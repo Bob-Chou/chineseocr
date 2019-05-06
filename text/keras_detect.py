@@ -37,6 +37,12 @@ _boxes, _scores, _ = yolo_eval(textModel.output)
 
 # wrapped end-to-end model
 keras_model = Model([textModel.input, image_shape], [_boxes, _scores])
+# compile model to setup tfpark preqs
+keras_model.compile(optimizer="rmsprop")
+from zoo import init_nncontext
+from zoo.tfpark import KerasModel
+_ = init_nncontext()
+keras_model = KerasModel(keras_model)
 
 def text_detect(img,prob = 0.05):
     im    = Image.fromarray(img)
@@ -60,7 +66,8 @@ def text_detect(img,prob = 0.05):
          box,scores = pred[:,:4],pred[:,-1]
          
          """
-         box, scores = keras_model.predict_on_batch([image_data, imgShape])
+         box, scores = keras_model.predict([image_data, imgShape],
+                                           distributed=True)
 
     keep = np.where(scores>prob)
     box[:, 0:4][box[:, 0:4]<0] = 0
