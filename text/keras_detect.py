@@ -9,6 +9,7 @@ from apphelper.image import resize_im,letterbox_image
 from PIL import Image
 import numpy as np
 import tensorflow as tf
+_ = tf.Session()
 graph = tf.get_default_graph()##解决web.py 相关报错问题
 
 anchors = [float(x) for x in keras_anchors.split(',')]
@@ -66,8 +67,7 @@ def text_detect(img,prob = 0.05):
          box,scores = pred[:,:4],pred[:,-1]
          
          """
-         box, scores = keras_model.predict([image_data, imgShape],
-                                           distributed=True)
+         box, scores = keras_model.predict_on_batch([image_data, imgShape])
 
     keep = np.where(scores>prob)
     box[:, 0:4][box[:, 0:4]<0] = 0
