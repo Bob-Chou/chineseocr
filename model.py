@@ -112,13 +112,9 @@ def model(img,detectAngle=False,config={},leftAdjust=False,rightAdjust=False,alp
     @@param:ifadjustDegree 调整文字识别倾斜角度
     @@param:detectAngle,是否检测文字朝向
     """
-    angle,img = eval_angle(img,detectAngle=detectAngle)##文字方向检测
-    if opencvFlag!='keras':
-       img,f =letterbox_image(Image.fromarray(img), IMGSIZE)## pad
-       img = np.array(img)
-    else:
-        f=1.0##解决box在原图坐标不一致问题
-    
+    angle, img = eval_angle(img,detectAngle=detectAngle)##文字方向检测
+    img, f = letterbox_image(Image.fromarray(img), IMGSIZE)  ## pad
+    img = np.array(img)
     config['img'] = img
     text_recs = text_detect(**config)##文字检测
     newBox = sort_box(text_recs)##行文本识别

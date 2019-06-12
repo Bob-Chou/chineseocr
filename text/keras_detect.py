@@ -9,7 +9,11 @@ from apphelper.image import resize_im,letterbox_image
 from PIL import Image
 import numpy as np
 import tensorflow as tf
-_ = tf.Session()
+# config_proto = tf.ConfigProto()
+# config = tf.ConfigProto()
+# config.intra_op_parallelism_threads = 18
+# config.inter_op_parallelism_threads = 1
+# _ = tf.Session(config=config).as_default()
 graph = tf.get_default_graph()##解决web.py 相关报错问题
 
 anchors = [float(x) for x in keras_anchors.split(',')]
@@ -46,19 +50,13 @@ _ = init_nncontext()
 keras_model = KerasModel(keras_model)
 
 def text_detect(img,prob = 0.05):
-    im    = Image.fromarray(img)
-    # scale = IMGSIZE[0]
-    w,h   = im.size
-    # w_,h_ = resize_im(w,h, scale=scale, max_scale=2048)##短边固定为608,长边max_scale<4000
-    boxed_image,f = letterbox_image(im, IMGSIZE)
-    # boxed_image = im.resize((w_,h_), Image.BICUBIC)
-    image_data = np.array(boxed_image, dtype='float32')
+
+    w, h = IMGSIZE
+    image_data = img.astype(float)
     image_data /= 255.
     image_data = np.expand_dims(image_data, 0)  # Add batch dimension.
-    imgShape   = np.array([[h,w]])
+    imgShape   = np.array([IMGSIZE])
     inputShape = np.array([IMGSIZE])
-
-
     global graph
     with graph.as_default():
          ##定义 graph变量 解决web.py 相关报错问题

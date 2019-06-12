@@ -408,14 +408,14 @@ def letterbox_image(image, size,fillValue=[128,128,128]):
     new_w = int(image_w * min(w*1.0/image_w, h*1.0/image_h))
     new_h = int(image_h * min(w*1.0/image_w, h*1.0/image_h))
     
-    resized_image = image.resize((new_w,new_h), Image.BICUBIC)
+    resized_image = image.resize((new_w,new_h), Image.BILINEAR)
     if fillValue is None:
        fillValue = [int(x.mean()) for x in cv2.split(np.array(im))]
     boxed_image = Image.new('RGB', size, tuple(fillValue))
-    # boxed_image.paste(resized_image, (0,0))
+    boxed_image.paste(resized_image, (0,0))
     # Paste the image into the center could improve the performance than the
     # left-top corner
-    boxed_image.paste(resized_image, ((w - new_w) // 2, (h - new_h) // 2))
+    # boxed_image.paste(resized_image, ((w - new_w) // 2, (h - new_h) // 2))
     return boxed_image,new_w/image_w
 
 from scipy.ndimage import filters,interpolation,morphology,measurements,minimum

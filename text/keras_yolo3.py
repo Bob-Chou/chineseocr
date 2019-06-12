@@ -59,7 +59,7 @@ def DarknetConv2D_BN_Leaky(*args, **kwargs):
     no_bias_kwargs.update(kwargs)
     return compose(
         DarknetConv2D(*args, **no_bias_kwargs),
-        BatchNormalization(),
+        BatchNormalization(epsilon=1e-5),
         LeakyReLU(alpha=0.1))
 
 def resblock_body(x, num_filters, num_blocks):
